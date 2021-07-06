@@ -1,0 +1,23 @@
+.field {
+    border-spacing: 0;
+    border-collapse: collapse;
+    /* border: 1px solid lime; */
+    width: 200px;
+    height: 200px;
+}
+
+.field th {
+    padding: .5em;
+}
+
+.field td {
+    border: 1px solid black;
+    width: 2em;
+    height: 2em;
+}
+.field .light {
+    background: #eee;
+}
+.field .dark {
+    background: #000;
+}

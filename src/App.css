@@ -36,3 +36,8 @@
   height: 20px;
   color: white;
 }
+
+.snake-game-container {
+  display: flex;
+  justify-content: center;
+}

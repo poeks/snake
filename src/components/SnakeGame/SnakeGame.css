@@ -1,0 +1,10 @@
+.snake-game {
+    border: 1px solid yellow;
+    width: 500px;
+    height: 500px;
+    padding: 100px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    /* align-items: center; */
+}
