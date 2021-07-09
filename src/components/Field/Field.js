@@ -38,7 +38,7 @@ function Field() {
     return (
         <table className='field'>
             <tbody>
-                {tiles.map(row => <tr>{row.map(column => <td className={column.className}>{column.isFood ? food : ''}</td>)}</tr>)}
+                {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? food : ''}</td>)}</tr>)}
             </tbody>
         </table>
     )
