@@ -13,6 +13,18 @@ const food = String.fromCodePoint(0x1F34E); // Apple
 const allowedDirections = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
 
 
+function generateRandomPosition() {
+    // Substract 1 from amountOfRows/Columns because tiles array is zero based indexed.
+    const xCoordinate = Math.round(Math.random() * amountOfRows - 1);
+    const yCoordinate = Math.round(Math.random() * amountOfColumns - 1);
+    return {x: xCoordinate, y: yCoordinate}
+}
+
+
+function positionsAreEqual(firstPosition, secondPosition) {
+    return firstPosition?.x === secondPosition?.x && firstPosition?.y === secondPosition?.y;
+}
+
 function Field() {
 
     const [snakeHeadPosition, setSnakeHeadPosition] = useState({x: 0, y: 0});
@@ -25,30 +37,29 @@ function Field() {
 
                 const newHead = {...h};
 
+                // Enable the snake head to go trough walls.
                 switch (direction.current) {
                     case 'ArrowDown':
-                        newHead.x++;
+                        newHead.y = newHead.y === amountOfRows - 1 ? 0 : newHead.y + 1
                         break
                     case 'ArrowUp':
-                        newHead.x--;
+                        newHead.y = newHead.y === 0 ? amountOfRows - 1 : newHead.y -1
                         break
                     case 'ArrowRight':
-                        newHead.y++;
+                        newHead.x = newHead.x === amountOfColumns - 1 ? 0 : newHead.x + 1
                         break
                     case 'ArrowLeft':
-                        newHead.y--;
+                        newHead.x = newHead.x === 0 ? amountOfColumns - 1 : newHead.x -1
                         break
                     default:
                         break
                 }
 
-                // Enable the snake head to go trough walls.
-                newHead.x = (newHead.x < amountOfRows) ? newHead.x : 0;
-                newHead.y = (newHead.y < amountOfColumns) ? newHead.y : 0;
-
                 return newHead;
-            })
-        }, 1000);
+            });
+
+
+        }, 750);
         
         return () => clearInterval(interval);  // Make sure to clear the interval if the component unmounts.
       }, []);
@@ -61,8 +72,13 @@ function Field() {
         }
     };
 
-    tiles[snakeHeadPosition.x][snakeHeadPosition.y].className = 'dark';
-    tiles[foodPosition.x][foodPosition.y].isFood = true;
+    
+    tiles[snakeHeadPosition.y][snakeHeadPosition.x].className = 'dark';
+    tiles[foodPosition.y][foodPosition.x].isFood = true;  // TOOD crashes sometimes when new food is generated
+
+    if (positionsAreEqual(snakeHeadPosition, foodPosition)) {
+        setFoodPosition(generateRandomPosition())
+    }
 
     // The tabindex indicates that the element can be focussed. -1 forces the user to click the table first.
     // TODO don't scroll the page when pressing ArrowUp or ArrowDown.
