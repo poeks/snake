@@ -28,7 +28,7 @@ function positionsAreEqual(firstPosition, secondPosition) {
 
 function Field() {
 
-    const [snakeHeadPosition, setSnakeHeadPosition] = useState({x: 0, y: 0});
+    const [snakeBody, setsnakeBody] = useState([{x: 0, y: 5}, {x: 1, y: 5}]);
     const [foodPosition, setFoodPosition] = useState({x: 5, y: 5});
     const direction = useRef('ArrowRight');
 
@@ -36,9 +36,12 @@ function Field() {
         document.getElementById('playing-field').focus();  // Required so key presses will immediately work.
         
         const interval = setInterval(() => {
-            setSnakeHeadPosition(h => {
+            setsnakeBody(h => {
 
-                const newHead = {...h};
+                const newBody = [];
+                h.forEach(position => {newBody.push({x: position.x, y: position.y})})
+
+                let newHead = {x: newBody[0].x, y: newBody[0].y};
 
                 // Enable the snake head to go trough walls.
                 switch (direction.current) {
@@ -58,7 +61,7 @@ function Field() {
                         break
                 }
 
-                return newHead;
+                return [newHead, ...newBody.slice(0, newBody.length -1)];
             });
 
 
@@ -76,10 +79,10 @@ function Field() {
         }
     };
 
-    tiles[snakeHeadPosition.y][snakeHeadPosition.x].className = 'dark';
+    snakeBody.forEach(position => {tiles[position.y][position.x].className = 'dark'})
     tiles[foodPosition.y][foodPosition.x].isFood = true;  // TOOD crashes sometimes when new food is generated
 
-    if (positionsAreEqual(snakeHeadPosition, foodPosition)) {
+    if (positionsAreEqual(snakeBody[0], foodPosition)) {
         setFoodPosition(generateRandomPosition())
     }
 
