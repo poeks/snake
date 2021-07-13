@@ -25,6 +25,7 @@ function positionsAreEqual(firstPosition, secondPosition) {
     return firstPosition?.x === secondPosition?.x && firstPosition?.y === secondPosition?.y;
 }
 
+
 function Field() {
 
     const [snakeHeadPosition, setSnakeHeadPosition] = useState({x: 0, y: 0});
@@ -71,11 +72,10 @@ function Field() {
     const handleKeyPress = (e) => {
         if (allowedDirections.has(e.key)) {
             direction.current = e.key;  // useState does not work in the setInterval.
-            e.preventDefault();
+            e.preventDefault();  // Prevent that the up and down arrow keys scroll the page.
         }
     };
 
-    
     tiles[snakeHeadPosition.y][snakeHeadPosition.x].className = 'dark';
     tiles[foodPosition.y][foodPosition.x].isFood = true;  // TOOD crashes sometimes when new food is generated
 
