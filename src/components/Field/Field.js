@@ -32,6 +32,8 @@ function Field() {
     const direction = useRef('ArrowRight');
 
     useEffect(() => {
+        document.getElementById('playing-field').focus();  // Required so key presses will immediately work.
+        
         const interval = setInterval(() => {
             setSnakeHeadPosition(h => {
 
@@ -84,7 +86,7 @@ function Field() {
     // The tabindex indicates that the element can be focussed. -1 forces the user to click the table first.
     // TODO don't scroll the page when pressing ArrowUp or ArrowDown.
     return (
-        <table className='field' onKeyDown={handleKeyPress} tabIndex="-1">
+        <table id='playing-field' className='field' onKeyDown={handleKeyPress} tabIndex="-1">
             <tbody>
                 {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? food : ''}</td>)}</tr>)}
             </tbody>
