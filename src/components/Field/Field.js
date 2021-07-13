@@ -69,6 +69,7 @@ function Field() {
     const handleKeyPress = (e) => {
         if (allowedDirections.has(e.key)) {
             direction.current = e.key;  // useState does not work in the setInterval.
+            e.preventDefault();
         }
     };
 
