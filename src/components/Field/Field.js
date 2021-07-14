@@ -9,7 +9,7 @@ const defaultTileProps = {
 
 const amountOfRows = 10;
 const amountOfColumns = amountOfRows;
-const food = String.fromCodePoint(0x1F34E); // Apple
+const foodEmoji = String.fromCodePoint(0x1F34E); // Apple
 const allowedDirections = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
 
 
@@ -25,23 +25,26 @@ function positionsAreEqual(firstPosition, secondPosition) {
     return firstPosition?.x === secondPosition?.x && firstPosition?.y === secondPosition?.y;
 }
 
+function deepCopy(object) {
+    // Note: method does not gaurantee deepcopy.
+    return JSON.parse(JSON.stringify(object))
+}
+
 
 function Field() {
 
-    const [snakeBody, setsnakeBody] = useState([{x: 0, y: 5}, {x: 1, y: 5}]);
-    const [foodPosition, setFoodPosition] = useState({x: 5, y: 5});
+    // Define all positions in a single state makes setting in the useEffect callback easier.
+    const [positions, setPositions] = useState({snakeBody:[{x: 0, y: 5}, {x: 1, y: 5}], food: {x: 5, y: 5}})
     const direction = useRef('ArrowRight');
 
     useEffect(() => {
         document.getElementById('playing-field').focus();  // Required so key presses will immediately work.
         
         const interval = setInterval(() => {
-            setsnakeBody(h => {
+            setPositions(p => {
 
-                const newBody = [];
-                h.forEach(position => {newBody.push({x: position.x, y: position.y})})
-
-                let newHead = {x: newBody[0].x, y: newBody[0].y};
+                const newPositions = deepCopy(p);
+                const newHead = {x: newPositions.snakeBody[0].x, y: newPositions.snakeBody[0].y};
 
                 // Enable the snake head to go trough walls.
                 switch (direction.current) {
@@ -61,9 +64,16 @@ function Field() {
                         break
                 }
 
-                return [newHead, ...newBody.slice(0, newBody.length -1)];
-            });
+                newPositions.snakeBody = [newHead, ...newPositions.snakeBody]
 
+                if (positionsAreEqual(newHead, newPositions.food)) {
+                    newPositions.food = generateRandomPosition();
+                } else {
+                    newPositions.snakeBody.pop();
+                }
+
+                return newPositions;
+            });
 
         }, 750);
         
@@ -79,19 +89,16 @@ function Field() {
         }
     };
 
-    snakeBody.forEach(position => {tiles[position.y][position.x].className = 'dark'})
-    tiles[foodPosition.y][foodPosition.x].isFood = true;  // TOOD crashes sometimes when new food is generated
+    const { snakeBody, food } = positions;
 
-    if (positionsAreEqual(snakeBody[0], foodPosition)) {
-        setFoodPosition(generateRandomPosition())
-    }
+    snakeBody.forEach((position, i) => {tiles[position.y][position.x].className = 'dark'})
+    tiles[food.y][food.x].isFood = true;  // TOOD crashes sometimes when new food is generated
 
     // The tabindex indicates that the element can be focussed. -1 forces the user to click the table first.
-    // TODO don't scroll the page when pressing ArrowUp or ArrowDown.
     return (
         <table id='playing-field' className='field' onKeyDown={handleKeyPress} tabIndex="-1">
             <tbody>
-                {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? food : ''}</td>)}</tr>)}
+                {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? foodEmoji : ''}</td>)}</tr>)}
             </tbody>
         </table>
     )
