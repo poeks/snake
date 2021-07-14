@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './Field.css';
 
 
@@ -53,10 +53,9 @@ function deepCopy(object) {
 }
 
 
-function Field() {
+function Field({positions, setPositions}) {
 
     // Define all positions in a single state makes setting in the useEffect callback easier.
-    const [positions, setPositions] = useState({snakeBody:[{x: 0, y: 5}, {x: 1, y: 5}], food: {x: 5, y: 5}})
     const directionRef = useRef('ArrowRight');
 
     useEffect(() => {
