@@ -15,8 +15,8 @@ const allowedDirections = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowD
 
 function generateRandomPosition() {
     // Substract 1 from amountOfRows/Columns because tiles array is zero based indexed.
-    const xCoordinate = Math.round(Math.random() * amountOfRows - 1);
-    const yCoordinate = Math.round(Math.random() * amountOfColumns - 1);
+    const xCoordinate = Math.round(Math.random() * (amountOfRows - 1));
+    const yCoordinate = Math.round(Math.random() * (amountOfColumns - 1));
     return {x: xCoordinate, y: yCoordinate}
 }
 
@@ -115,7 +115,7 @@ function Field() {
     const { snakeBody, food } = positions;
 
     snakeBody.forEach((position, i) => {tiles[position.y][position.x].className = 'dark'})
-    tiles[food.y][food.x].isFood = true;  // TOOD crashes sometimes when new food is generated
+    tiles[food.y][food.x].isFood = true;
 
     // The tabindex indicates that the element can be focussed. -1 forces the user to click the table first.
     return (
