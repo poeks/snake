@@ -27,7 +27,6 @@ function positionsAreEqual(firstPosition, secondPosition) {
 
 
 const getReserveDirection = (direction) =>  {
-    console.log('received in function', direction)
     switch (direction) {
         case 'ArrowRight':
             return 'ArrowLeft';
