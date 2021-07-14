@@ -12,10 +12,10 @@ function ScoreDisplay ({displayName, value}) {
 }
 
 
-function Scoreboard ({buttonHandler}) {
+function Scoreboard ({score, buttonHandler}) {
     return (
     <div className='score-board'>
-        <ScoreDisplay displayName='Score' value={10}/>
+        <ScoreDisplay displayName='Score' value={score}/>
         <ScoreDisplay displayName='Highscore' value={100}/>
         <button onClick={buttonHandler}>Reset game</button>
     </div>
