@@ -25,6 +25,29 @@ function positionsAreEqual(firstPosition, secondPosition) {
     return firstPosition?.x === secondPosition?.x && firstPosition?.y === secondPosition?.y;
 }
 
+
+const getReserveDirection = (direction) =>  {
+    console.log('received in function', direction)
+    switch (direction) {
+        case 'ArrowRight':
+            return 'ArrowLeft';
+        case 'ArrowLeft':
+            return 'ArrowRight';
+        case 'ArrowUp':
+            return 'ArrowDown';
+        case 'ArrowDown':
+            return 'ArrowUp';
+        default:
+            return undefined;
+    }
+}
+
+
+const isValidChangeOfDirection = (event, direction) => {
+    return allowedDirections.has(event.key) && event.key !== getReserveDirection(direction)
+}
+
+
 function deepCopy(object) {
     // Note: method does not gaurantee deepcopy.
     return JSON.parse(JSON.stringify(object))
@@ -35,7 +58,7 @@ function Field() {
 
     // Define all positions in a single state makes setting in the useEffect callback easier.
     const [positions, setPositions] = useState({snakeBody:[{x: 0, y: 5}, {x: 1, y: 5}], food: {x: 5, y: 5}})
-    const direction = useRef('ArrowRight');
+    const directionRef = useRef('ArrowRight');
 
     useEffect(() => {
         document.getElementById('playing-field').focus();  // Required so key presses will immediately work.
@@ -47,7 +70,7 @@ function Field() {
                 const newHead = {x: newPositions.snakeBody[0].x, y: newPositions.snakeBody[0].y};
 
                 // Enable the snake head to go trough walls.
-                switch (direction.current) {
+                switch (directionRef.current) {
                     case 'ArrowDown':
                         newHead.y = newHead.y === amountOfRows - 1 ? 0 : newHead.y + 1
                         break
@@ -83,9 +106,9 @@ function Field() {
     const tiles = Array.from(Array(amountOfRows), () => Array.from(Array(amountOfColumns), () => {return {...defaultTileProps}}))
 
     const handleKeyPress = (e) => {
-        if (allowedDirections.has(e.key)) {
-            direction.current = e.key;  // useState does not work in the setInterval.
-            e.preventDefault();  // Prevent that the up and down arrow keys scroll the page.
+        e.preventDefault();  // Prevent that the up and down arrow keys scroll the page.
+        if (isValidChangeOfDirection(e, directionRef.current)) {
+            directionRef.current = e.key;  // useState does not work in the setInterval.
         }
     };
 
