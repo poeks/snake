@@ -1,5 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import './Field.css';
+import {
+    positionsAreEqual,
+    calculatePositionForRectangularField,
+    calculateIdForRectangularField
+} from '../Field/positions';
 
 
 const defaultTileProps = {
@@ -12,18 +17,9 @@ const amountOfColumns = amountOfRows;
 const foodEmoji = String.fromCodePoint(0x1F34E); // Apple
 const allowedDirections = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
 
-
-function generateRandomPosition() {
-    // Substract 1 from amountOfRows/Columns because tiles array is zero based indexed.
-    const xCoordinate = Math.round(Math.random() * (amountOfRows - 1));
-    const yCoordinate = Math.round(Math.random() * (amountOfColumns - 1));
-    return {x: xCoordinate, y: yCoordinate}
-}
-
-
-function positionsAreEqual(firstPosition, secondPosition) {
-    return firstPosition?.x === secondPosition?.x && firstPosition?.y === secondPosition?.y;
-}
+const generateTiles = () =>  Array.from(Array(amountOfRows), () => Array.from(Array(amountOfColumns), () => {return {...defaultTileProps}}));
+const calculatePositionFromID = calculatePositionForRectangularField.bind(null, amountOfRows, amountOfColumns);
+const calculateIDFromPosition = calculateIdForRectangularField.bind(null, amountOfRows);
 
 
 const getReserveDirection = (direction) =>  {
@@ -47,7 +43,12 @@ const isValidChangeOfDirection = (event, direction) => {
 }
 
 
-function deepCopy(object) {
+const getRandomItemFromSet = set => {
+    return Array.from(set)[Math.floor(Math.random() * set.size)];
+}
+
+
+const deepCopy = (object) => {
     // Note: method does not gaurantee deepcopy.
     return JSON.parse(JSON.stringify(object))
 }
@@ -59,7 +60,7 @@ function Field({positions, setPositions}) {
     const directionRef = useRef('ArrowRight');
 
     useEffect(() => {
-        document.getElementById('playing-field').focus();  // Required so key presses will immediately work.
+        document.getElementById('playing-field').focus();  // Make key presses immediately work when starting game and between intervals.
         
         const interval = setInterval(() => {
             setPositions(p => {
@@ -88,9 +89,16 @@ function Field({positions, setPositions}) {
                 newPositions.snakeBody = [newHead, ...newPositions.snakeBody]
 
                 if (positionsAreEqual(newHead, newPositions.food)) {
-                    newPositions.food = generateRandomPosition();
+                    // New food positions has to be randomly selected from a position not occupied by the snake body.
+                    const tileIDs = new Set(Array(amountOfRows * amountOfColumns).keys());
+
+                    newPositions.snakeBody.forEach((p) => {
+                        tileIDs.delete(calculateIDFromPosition(p));
+                    })
+                    newPositions.food = calculatePositionFromID(getRandomItemFromSet(tileIDs));
+
                 } else {
-                    newPositions.snakeBody.pop();
+                    newPositions.snakeBody.pop();  // Remove last item so snake moves forward.
                 }
 
                 return newPositions;
@@ -101,7 +109,7 @@ function Field({positions, setPositions}) {
         return () => clearInterval(interval);  // Make sure to clear the interval if the component unmounts.
       }, []);
 
-    const tiles = Array.from(Array(amountOfRows), () => Array.from(Array(amountOfColumns), () => {return {...defaultTileProps}}))
+    const tiles = generateTiles();
 
     const handleKeyPress = (e) => {
         e.preventDefault();  // Prevent that the up and down arrow keys scroll the page.
