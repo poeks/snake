@@ -14,7 +14,7 @@ const defaultTileProps = {
 
 const amountOfRows = 10;
 const amountOfColumns = amountOfRows;
-const foodEmoji = String.fromCodePoint(0x1F34E); // Apple
+const foodEmojis = new Set(['🍎', '🍉', '🥥', '🍄', '🥜', '🥦', '🧀', '🌮', '🍙', '🍪', '🍺']);
 const allowedDirections = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
 
 const generateTiles = () =>  Array.from(Array(amountOfRows), () => Array.from(Array(amountOfColumns), () => {return {...defaultTileProps}}));
@@ -96,6 +96,7 @@ function Field({positions, setPositions}) {
                         tileIDs.delete(calculateIDFromPosition(p));
                     })
                     newPositions.food = calculatePositionFromID(getRandomItemFromSet(tileIDs));
+                    newPositions.food.icon = getRandomItemFromSet(foodEmojis)
 
                 } else {
                     newPositions.snakeBody.pop();  // Remove last item so snake moves forward.
@@ -127,7 +128,7 @@ function Field({positions, setPositions}) {
     return (
         <table id='playing-field' className='field' onKeyDown={handleKeyPress} tabIndex="-1">
             <tbody>
-                {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? foodEmoji : ''}</td>)}</tr>)}
+                {tiles.map((row, rowIndex) => <tr key={rowIndex}>{row.map((tile, columnIndex) => <td key={columnIndex} className={tile.className}>{tile.isFood ? food.icon : ''}</td>)}</tr>)}
             </tbody>
         </table>
     )

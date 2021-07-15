@@ -4,7 +4,7 @@ import Field from '../Field/Field';
 import Scoreboard from '../ScoreBoard/Scoreboard';
 
 const initialSnakeBody = [{x: 0, y: 5}, {x: 1, y: 5}];
-const initialFoodPosition = {x: 5, y: 5};
+const initialFoodPosition = {x: 5, y: 5, icon: '🍎'};
 
 
 const calculateScore = (snakeBody) => {
