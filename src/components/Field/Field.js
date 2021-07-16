@@ -54,7 +54,7 @@ const deepCopy = (object) => {
 }
 
 
-function Field({positions, setPositions}) {
+function Field({positions, setPositions, setGameRunning}) {
 
     // Define all positions in a single state makes setting in the useEffect callback easier.
     const directionRef = useRef('ArrowRight');
@@ -63,32 +63,38 @@ function Field({positions, setPositions}) {
         document.getElementById('playing-field').focus();  // Make key presses immediately work when starting game and between intervals.
         
         const interval = setInterval(() => {
-            setPositions(p => {
+            setPositions(positions => {
 
-                const newPositions = deepCopy(p);
-                const newHead = {x: newPositions.snakeBody[0].x, y: newPositions.snakeBody[0].y};
+                const newPositions = deepCopy(positions);
+                const currentHead = newPositions.snakeBody[0];
+                const nextHead = {...currentHead};
 
                 // Enable the snake head to go trough walls.
                 switch (directionRef.current) {
                     case 'ArrowDown':
-                        newHead.y = newHead.y === amountOfRows - 1 ? 0 : newHead.y + 1
+                        nextHead.y = nextHead.y === amountOfRows - 1 ? 0 : nextHead.y + 1
                         break
                     case 'ArrowUp':
-                        newHead.y = newHead.y === 0 ? amountOfRows - 1 : newHead.y -1
+                        nextHead.y = nextHead.y === 0 ? amountOfRows - 1 : nextHead.y -1
                         break
                     case 'ArrowRight':
-                        newHead.x = newHead.x === amountOfColumns - 1 ? 0 : newHead.x + 1
+                        nextHead.x = nextHead.x === amountOfColumns - 1 ? 0 : nextHead.x + 1
                         break
                     case 'ArrowLeft':
-                        newHead.x = newHead.x === 0 ? amountOfColumns - 1 : newHead.x -1
+                        nextHead.x = nextHead.x === 0 ? amountOfColumns - 1 : nextHead.x -1
                         break
                     default:
                         break
                 }
 
-                newPositions.snakeBody = [newHead, ...newPositions.snakeBody]
+                newPositions.snakeBody = [nextHead, ...newPositions.snakeBody]
+                const bodyIDPositions = new Set(positions.snakeBody.map(p => calculateIDFromPosition(p)));
 
-                if (positionsAreEqual(newHead, newPositions.food)) {
+                if (bodyIDPositions.has(calculateIDFromPosition(nextHead))) {
+                    setGameRunning(false);
+                }
+
+                if (positionsAreEqual(nextHead, newPositions.food)) {
                     // New food positions has to be randomly selected from a position not occupied by the snake body.
                     const tileIDs = new Set(Array(amountOfRows * amountOfColumns).keys());
 
@@ -121,7 +127,7 @@ function Field({positions, setPositions}) {
 
     const { snakeBody, food } = positions;
 
-    snakeBody.forEach((position, i) => {tiles[position.y][position.x].className = 'dark'})
+    snakeBody.forEach((position) => {tiles[position.y][position.x].className = 'dark'})
     tiles[food.y][food.x].isFood = true;
 
     // The tabindex indicates that the element can be focussed. -1 forces the user to click the table first.
