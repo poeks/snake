@@ -13,11 +13,10 @@ const calculateScore = (snakeBody) => {
 }
 
 
-function SnakeGame() {
+function SnakeGame({highScore, setHighScore}) {
 
     const [gameRunning, setGameRunning] = useState(false);
     const [positions, setPositions] = useState(initialPositions);
-    const [highScore, setHighScore] = useState(0);
 
     const score = calculateScore(positions.snakeBody);
     let text = 'Press me to start!'
