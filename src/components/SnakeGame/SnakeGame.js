@@ -17,6 +17,7 @@ function SnakeGame() {
 
     const [gameRunning, setGameRunning] = useState(false);
     const [positions, setPositions] = useState(initialPositions);
+    const [highScore, setHighScore] = useState(0);
 
     const score = calculateScore(positions.snakeBody);
     let text = 'Press me to start!'
@@ -29,12 +30,13 @@ function SnakeGame() {
         <div className='snake-game'>
             {gameRunning
                 ?
-            <Field positions={positions} setPositions={setPositions} setGameRunning={setGameRunning}/>
+            <Field positions={positions} setPositions={setPositions} setGameRunning={setGameRunning} setHighScore={setHighScore}/>
                 :
             <button className='field' onClick={() => {setGameRunning(true); if (score){setPositions(initialPositions)}}}><pre>{text}</pre></button>}
-            <Scoreboard score={score} buttonHandler={() => {setGameRunning(false); setPositions(initialPositions)}}/>
+            <Scoreboard score={score} highScore={highScore} buttonHandler={() => {setGameRunning(false); setPositions(initialPositions)}}/>
         </div>
     )
 }
 
 export default SnakeGame;
+export { calculateScore };

@@ -5,6 +5,7 @@ import {
     calculatePositionForRectangularField,
     calculateIdForRectangularField
 } from '../Field/positions';
+import { calculateScore } from '../SnakeGame/SnakeGame';
 
 
 const defaultTileProps = {
@@ -54,7 +55,7 @@ const deepCopy = (object) => {
 }
 
 
-function Field({positions, setPositions, setGameRunning}) {
+function Field({positions, setPositions, setGameRunning, setHighScore}) {
 
     // Define all positions in a single state makes setting in the useEffect callback easier.
     const directionRef = useRef('ArrowRight');
@@ -92,6 +93,10 @@ function Field({positions, setPositions, setGameRunning}) {
 
                 if (bodyIDPositions.has(calculateIDFromPosition(nextHead))) {
                     setGameRunning(false);
+                    setHighScore(highScore => {
+                        let score = calculateScore(positions.snakeBody);
+                        return score > highScore ? score : highScore;
+                    })
                 }
 
                 if (positionsAreEqual(nextHead, newPositions.food)) {
