@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import logo from './Free vector anaconda snake.svg';
 import './App.css';
-import SnakeGame from './components/SnakeGame/SnakeGame';
+import SnakeGame from './lib/index.js';
+
 
 function App() {
   const [highScore, setHighScore] = useState(0);

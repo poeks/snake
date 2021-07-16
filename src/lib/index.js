@@ -1,3 +1,3 @@
-import SnakeGame from "../components/SnakeGame/SnakeGame";
+import SnakeGame from "./components/SnakeGame/SnakeGame";
 
 export default SnakeGame;
