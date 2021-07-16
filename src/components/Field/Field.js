@@ -116,7 +116,7 @@ function Field({positions, setPositions, setGameRunning, setHighScore}) {
                 return newPositions;
             });
 
-        }, 750);
+        }, 250);
         
         return () => clearInterval(interval);  // Make sure to clear the interval if the component unmounts.
       }, []);
