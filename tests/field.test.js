@@ -1,4 +1,4 @@
-const { calculatePositionForRectangularField, calculateIdForRectangularField } = require('../src/components/Field/positions');
+const { calculatePositionForRectangularField, calculateIdForRectangularField } = require('../src/lib/components/Field/positions.js');
 
 // calculateIdForRectangularField
 test('calculateIdForRectangularField: zero position', () => expect(
